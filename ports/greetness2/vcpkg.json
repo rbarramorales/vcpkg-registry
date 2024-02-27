@@ -1,0 +1,18 @@
+{
+  "name": "greetness2",
+  "version": "0.1.0",
+  "description": "Library created with cmka-init to test vcpkg",
+  "homepage": "https://github.com/rbarramorales/greetness2",
+  "license": "MIT",
+  "dependencies": [
+    "fmt",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

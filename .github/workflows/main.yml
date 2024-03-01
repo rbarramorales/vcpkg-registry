@@ -36,12 +36,6 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: Build ports
-      run: ${{ github.workspace }}/vcpkg/vcpkg install
-      env:
-        VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/ports"
-      shell: bash
-
     - name: Add NuGet sources
       shell: bash
       run: |
@@ -55,3 +49,10 @@ jobs:
         mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
           setapikey "${{ secrets.GH_PACKAGES_TOKEN }}" \
           -Source "${{ env.FEED_URL }}"
+
+    - name: Build ports
+      run: ${{ github.workspace }}/vcpkg/vcpkg install
+      env:
+        VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/ports"
+      shell: bash
+

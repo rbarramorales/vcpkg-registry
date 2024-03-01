@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: ["main"]
 
+env:
+  USERNAME: rbarramorales
+  VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
+  FEED_URL: https://nuget.pkg.github.com/rbarramorales/index.json
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite;nuget,https://nuget.pkg.github.com/rbarramorales/index.json,readwrite"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,6 +39,19 @@ jobs:
     - name: Build ports
       run: ${{ github.workspace }}/vcpkg/vcpkg install
       env:
-        VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
         VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/ports"
       shell: bash
+
+    - name: Add NuGet sources
+      shell: bash
+      run: |
+        mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
+          sources add \
+          -Source "${{ env.FEED_URL }}" \
+          -StorePasswordInClearText \
+          -Name GitHubPackages \
+          -UserName "${{ env.USERNAME }}" \
+          -Password "${{ secrets.GH_PACKAGES_TOKEN }}"
+        mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
+          setapikey "${{ secrets.GH_PACKAGES_TOKEN }}" \
+          -Source "${{ env.FEED_URL }}"
